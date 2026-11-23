@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist QA Pesanvo</title>
+<style>
+:root{--bg:var(--color-background-secondary,#f6f7f9);--card:var(--color-background-primary,#fff);--text:var(--color-text-primary,#1b2330);--muted:var(--color-text-secondary,#667085);--line:var(--color-border-primary,#e4e7ec);--pri:var(--color-text-success,#0b7a5b);--pri-soft:var(--color-background-success,#e6f4ef);--bad:var(--color-text-danger,#c0392b);--bad-soft:var(--color-background-danger,#fdecea);--warn:var(--color-text-warning,#b7791f);--warn-soft:var(--color-background-warning,#fff6e0);--inv:var(--color-text-inverse,#fff)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--font-sans,system-ui,-apple-system,"Segoe UI",sans-serif)}
+header.top{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px}
+.top h1{margin:0;font-size:17px}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.bar>i{display:block;height:100%;width:0;background:var(--pri);transition:width .25s}
+.stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.stats b{color:var(--text)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tools input[type=search]{flex:1 1 180px;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+button,select{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;min-height:40px}
+button:hover{border-color:var(--pri)}
+button.pri{background:var(--pri);color:var(--inv);border-color:var(--pri)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:14px}
+.intro h2{margin:0 0 6px;font-size:16px}
+.intro ul{margin:6px 0 0;padding-left:20px}
+.legend span{display:inline-block;margin:2px 6px 2px 0;padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+nav.toc a{font-size:13px;text-decoration:none;color:var(--text);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:99px}
+nav.toc a small{color:var(--muted)}
+nav.toc a.done{background:var(--pri-soft);border-color:var(--pri)}
+section.sec{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+section.sec>summary,.sec>.hd{list-style:none;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.sec>summary::-webkit-details-marker{display:none}
+.sec>summary:before{content:"▸";color:var(--muted);transition:transform .15s}
+.sec[open]>summary:before{transform:rotate(90deg)}
+.sec .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.sec .cnt.ok{color:var(--pri)}
+.sec .body{padding:0 16px 14px}
+.grp{margin-top:12px}
+.grp h3{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.it{display:flex;gap:10px;align-items:flex-start;padding:9px 8px;border-radius:8px;border-bottom:1px solid var(--line)}
+.it:last-child{border-bottom:0}
+.it input[type=checkbox]{width:22px;height:22px;flex:0 0 22px;margin-top:1px;accent-color:var(--pri);cursor:pointer}
+.it .tx{flex:1;min-width:0}
+.it label{cursor:pointer;display:block}
+.it.ck label{color:var(--muted);text-decoration:line-through}
+.it.bug{background:var(--bad-soft)}
+.it .acts{display:flex;gap:4px;flex:0 0 auto}
+.it .acts button{padding:2px 8px;min-height:30px;font-size:12px}
+.it.bug .acts .b{background:var(--bad);color:var(--inv);border-color:var(--bad)}
+.note{width:100%;margin-top:6px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;font-size:13px;min-height:54px;display:none}
+.it.shownote .note{display:block}
+.tag{font-size:11px;padding:0 6px;border-radius:99px;margin-left:4px;white-space:nowrap;vertical-align:1px}
+.tag.p1{background:var(--bad-soft);color:var(--bad)}
+.tag.m{background:var(--warn-soft);color:var(--warn)}
+.tag.a{background:var(--pri-soft);color:var(--pri)}
+.hide{display:none!important}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:10px}
+.meta label{font-size:12px;color:var(--muted);display:block}
+.meta input{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+footer{padding:20px 16px 60px;text-align:center;color:var(--muted);font-size:13px}
+@media (max-width:560px){.it{flex-wrap:wrap}.it .acts{margin-left:32px}.wrap{padding:10px}}
+@media print{header.top .tools,nav.toc,.acts{display:none}.sec .body{display:block}details.sec:not([open])>.body{display:block}header.top{position:static}.it.shownote .note{display:block}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Checklist QA Pesanvo <span style="font-weight:400;color:var(--muted);font-size:13px">— tes manual oleh manusia</span></h1>
+  <div class="bar"><i id="barfill"></i></div>
+  <div class="stats">
+    <span>Selesai: <b id="sDone">0</b>/<b id="sTotal">0</b> (<b id="sPct">0%</b>)</span>
+    <span>Ada bug: <b id="sBug" style="color:var(--bad)">0</b></span>
+    <span>Prioritas tinggi sisa: <b id="sP1">0</b></span>
+  </div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Cari butir tes… (mis. login, invoice, mobile)">
+    <select id="filter">
+      <option value="all">Tampilkan semua</option>
+      <option value="todo">Belum dicek</option>
+      <option value="done">Sudah dicek</option>
+      <option value="bug">Ada bug</option>
+      <option value="p1">Prioritas tinggi</option>
+      <option value="mobile">Khusus mobile</option>
+    </select>
+    <button id="btnOpen">Buka semua</button>
+    <button id="btnClose">Tutup semua</button>
+    <button id="btnReport" class="pri">Laporan bug</button>
+    <button id="btnSave">Simpan / muat progres</button>
+    <button id="btnReset">Reset</button>
+  </div>
+</header>
+
+<div id="panel" class="hide" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px"><div style="background:var(--card);border:1px solid var(--line);border-radius:12px;max-width:720px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:10px;padding:16px">
+<b id="pTitle"></b><p id="pHelp" style="margin:0;font-size:13px;color:var(--muted)"></p>
+<textarea id="pText" style="flex:1;min-height:240px;width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:12px/1.4 var(--font-mono,monospace)"></textarea>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button id="pCopy" class="pri">Salin</button><button id="pLoad">Muat dari teks ini</button><button id="pOk" class="pri" style="background:var(--bad);border-color:var(--bad)">Ya, hapus semua</button><button id="pClose">Tutup</button></div></div></div>
+<div class="wrap">
+  <div class="intro">
+    <h2>Cara pakai (singkat)</h2>
+    <ul>
+      <li>Centang kotak kalau butir sudah dites dan <b>hasilnya benar</b>. Progres dihitung otomatis di bagian atas halaman.</li>
+      <li>Kalau menemukan masalah: klik tombol <b>Bug</b> di baris itu (baris jadi merah), lalu klik <b>Catatan</b> untuk menulis apa yang terjadi. Setelah itu klik <b>Laporan bug</b> di atas untuk menyalin semua bug.</li>
+      <li>Jangan lupa tes di <b>HP asli</b> (bukan cuma kecilkan jendela) dan di 2 bahasa (ID &amp; EN), tema terang &amp; gelap.</li>
+      <li><b>Penting:</b> halaman ini tidak bisa menyimpan di browser. Kalau ditutup/di-refresh, centang hilang. Klik <b>Simpan / muat progres</b> untuk menyalin progres (teks), simpan di catatan, dan tempel lagi untuk melanjutkan.</li>
+      <li>Jangan pakai akun produksi asli untuk tes pembayaran. Pakai mode sandbox / nominal kecil.</li>
+    </ul>
+    <p class="legend" style="margin:8px 0 0">
+      <span><b class="tag p1" style="margin:0">P1</b> = penting sekali, tes duluan</span>
+      <span><b class="tag m" style="margin:0">HP</b> = cek di layar HP</span>
+      <span><b class="tag a" style="margin:0">Admin</b> = hanya admin</span>
+    </p>
+    <div class="meta">
+      <div><label>Nama penguji</label><input data-meta="tester"></div>
+      <div><label>Tanggal tes</label><input type="date" data-meta="date"></div>
+      <div><label>Perangkat / browser / versi</label><input data-meta="device" placeholder="Mis. Redmi Note 12, Chrome 130"></div>
+      <div><label>Versi / branch aplikasi</label><input data-meta="build" placeholder="Mis. dev, commit 30cd2d0"></div>
+    </div>
+  </div>
+  <nav class="toc" id="toc"></nav>
+  <div id="app"></div>
+</div>
+<footer>Dibuat dari audit kode Pesanvo (route, view, controller, config paket). Jika ada fitur baru, tambahkan butirnya di bagian data pada file ini.</footer>
+
+<script>
+/* ===== DATA CHECKLIST =====
+   Penanda di awal teks:  ! = prioritas tinggi (P1),  ~ = cek di HP,  @ = khusus admin  */
+const DATA = [
+
+{id:"prep",t:"0. Persiapan sebelum tes",g:[
+["Akun & data uji",[
+"! Siapkan akun: (a) Owner baru, (b) Member/CS, (c) Admin Workspace, (d) Super Admin Pesanvo.",
+"Siapkan minimal 2 workspace berbeda untuk cek data tidak bocor antar workspace.",
+"Siapkan 1 nomor WhatsApp uji (bukan nomor pelanggan asli) dan 1 HP lain untuk membalas chat.",
+"Siapkan email asli yang bisa menerima email verifikasi, reset sandi, dan tagihan.",
+"Siapkan akun Google untuk tes Login/Daftar dengan Google.",
+"Siapkan kartu / e-wallet / VA mode sandbox untuk tes pembayaran (Midtrans & gateway Kasir).",
+"Siapkan file uji: gambar (jpg/png), PDF, video besar, dokumen, CSV kontak (benar & salah format), CSV produk.",
+]],
+["Perangkat yang dites",[
+"~ Android Chrome (HP asli) — ukuran layar kecil (360px) dan besar.",
+"~ iPhone Safari (jika ada) — cek keyboard, poni/notch, bilah bawah.",
+"Desktop Chrome, Firefox, Edge (dan Safari bila ada).",
+"Tablet / jendela setengah layar (lebar sekitar 768px).",
+"Tes dengan koneksi lambat (throttling 3G) dan saat offline sebentar.",
+"Tes tema Terang dan Gelap; tes bahasa Indonesia dan English.",
+]],
+]},
+
+{id:"landing",t:"1. Halaman publik / Landing (sebelum login)",g:[
+["Halaman utama ( / )",[
+"! Halaman terbuka tanpa error, tidak ada tulisan terpotong, tidak ada gambar rusak.",
+"Menu atas (header) terlihat benar; logo Pesanvo bisa diklik kembali ke beranda.",
+"Tombol Login dan Daftar/Mulai di header mengarah ke halaman yang benar.",
+"Bagian Hero: judul, subjudul, tombol utama (CTA) bekerja.",
+"Pratinjau Inbox tampil rapi dan animasi tidak patah-patah.",
+"Bagian 'Cara kerja' (#cara-kerja) bisa dituju dari menu dan scroll halus.",
+"Bagian 'Fitur' (#fitur) lengkap dan teks sesuai fitur yang benar-benar ada.",
+"Bagian 'Yang berubah untuk tim Anda' tampil benar.",
+"! Bagian Harga (#harga): 3 paket tampil benar — Spark Rp249.000, Grow Rp399.000 (unggulan), Peak Rp699.000 per bulan.",
+"Pilihan durasi 1/3/6/12 bulan menghitung diskon benar (0% / 15% / 20% / 25%) dan total berubah.",
+"Info Promo Peluncuran (diskon 50% tagihan pertama untuk 10 pembayar pertama) tampil; sisa slot sesuai kenyataan.",
+"Daftar metode pembayaran yang didukung tampil dan logonya tidak rusak.",
+"Bagian developer (#untuk-developer): tab contoh kode CRM / PHP / Node / Python bisa diganti; tombol salin kode bekerja.",
+"Bagian AI Agent (#ai-agent): logo, teks, dan tautan unduh bekerja.",
+"Footer: semua tautan (Syarat, Privasi, Docs, Status, dll.) terbuka dan tidak 404.",
+"Banner CTA bawah (warna utama) tombolnya bekerja.",
+"~ Di HP: tidak ada scroll ke samping, tombol cukup besar untuk jari, menu burger membuka dan menutup.",
+"~ Di HP: tabel/harga tidak terpotong, kartu paket tersusun ke bawah.",
+"Ganti bahasa ID ⇄ EN: seluruh teks ikut berganti, tidak ada kunci terjemahan mentah (mis. 'ui.pricing').",
+"Ganti tema terang/gelap: kontras teks tetap terbaca, tidak ada kotak putih mengganggu di mode gelap.",
+]],
+["Halaman publik lain",[
+"Halaman /fitur, /harga, /cara-kerja terbuka dan isinya konsisten dengan landing.",
+"Halaman /ai (Integrasi AI Agent): terbuka; tombol unduh panduan .md dan file per-agent bekerja.",
+"Halaman /docs (daftar dokumentasi) dan salah satu halaman /docs/{slug} terbuka; tautan antar dokumen tidak putus.",
+"Versi mentah dokumen (/docs/{slug}.md) bisa dibuka.",
+"Halaman /status (status layanan) tampil; /status.json menghasilkan JSON valid.",
+"Halaman error 404 (ketik alamat ngawur) tampil rapi, ada tombol kembali.",
+"Halaman error 403 tampil rapi.",
+"/sitemap.xml terbuka dan berisi alamat yang benar.",
+"robots.txt benar (situs produksi boleh diindeks; situs uji/staging diblok).",
+"Judul tab browser & deskripsi (SEO) sesuai tiap halaman; favicon tampil.",
+"Dipasang sebagai PWA/ikon layar utama di HP: ikon dan nama benar.",
+]],
+]},
+
+{id:"auth",t:"2. Daftar, Login, Sandi & Keamanan Akun",g:[
+["Pendaftaran (/register)",[
+"! Form daftar tampil: Nama, Nama workspace, Email, Sandi, Konfirmasi sandi, 'Dari mana tahu Pesanvo', Setuju Syarat.",
+"! Daftar dengan data benar → akun terbuat, masuk ke dashboard/onboarding, dapat Trial 7 hari.",
+"Kolom wajib dikosongkan satu per satu → muncul pesan error yang jelas di kolom yang tepat.",
+"Email sudah terdaftar → pesan error jelas (tidak membocorkan data lain).",
+"Email format salah (tanpa @, spasi, huruf besar) → ditolak / dinormalkan dengan benar.",
+"Sandi terlalu pendek / terlalu mudah → ditolak; aturan sandi ditampilkan jelas.",
+"Konfirmasi sandi beda → ditolak.",
+"Tombol mata (tampilkan/sembunyikan sandi) bekerja di kedua kolom sandi.",
+"Pilih 'Lainnya' pada sumber → kolom isian tambahan muncul dan wajib diisi.",
+"Checkbox Syarat & Ketentuan wajib dicentang; tautan Syarat/Privasi terbuka.",
+"Klik tombol Daftar dua kali cepat → tidak membuat akun ganda.",
+"Daftar berulang kali (batas 'daftar') → muncul pesan terlalu sering, bukan error mentah.",
+"Daftar dari tombol pilih paket di harga → alur 'checkout' membawa paket & durasi terpilih (tidak hilang).",
+"Daftar dengan Google (/auth/google): data nama/email terisi otomatis, akun terbuat.",
+"Jika pendaftaran ditutup admin → halaman 'register-closed' tampil, bukan form.",
+"Email selamat datang / verifikasi email terkirim, isi dan bahasanya benar, tautan bisa diklik.",
+"~ Di HP: form tidak tertutup keyboard, kolom aktif ikut terlihat, tombol Daftar tetap bisa dijangkau.",
+]],
+["Verifikasi email",[
+"Banner 'verifikasi email' muncul sampai email diverifikasi.",
+"Klik tautan di email → akun terverifikasi, banner hilang.",
+"Tautan verifikasi kedaluwarsa/rusak → pesan jelas, bisa kirim ulang.",
+"Tombol 'Kirim ulang' bekerja; klik berkali-kali dibatasi (6x/menit).",
+"Sebelum terverifikasi: aksi sensitif (mis. buat API key, simpan data penagihan) dicegah dengan pesan jelas; fitur lain tetap bisa dipakai.",
+]],
+["Login (/login)",[
+"! Login email + sandi benar → masuk ke dashboard.",
+"! Sandi salah → pesan error generik, tidak mengatakan 'email tidak ada' vs 'sandi salah'.",
+"Salah sandi berulang kali → dibatasi (throttle) dengan pesan jelas, lalu bisa coba lagi setelah menunggu.",
+"Akun diblokir admin → tidak bisa login, pesan jelas.",
+"Login dengan Google bekerja; akun Google belum terdaftar ditangani dengan benar.",
+"Tautkan akun Google dari Profil (/profil/tautkan-google) bekerja.",
+"Setelah login, diarahkan ke halaman yang tadinya ingin dibuka (redirect intended).",
+"Kalau sudah login lalu buka /login → diarahkan ke dashboard (bukan menampilkan form lagi).",
+"Logout → sesi hilang; tombol Back browser tidak menampilkan halaman privat.",
+"Buka dashboard tanpa login → dialihkan ke login.",
+"~ Login di HP: kolom sandi, tombol mata, 'lupa sandi' mudah ditekan.",
+]],
+["Lupa & reset sandi",[
+"! /forgot-password: isi email terdaftar → email reset terkirim.",
+"Isi email yang tidak terdaftar → pesan tetap netral (tidak membocorkan).",
+"Tautan reset di email membuka form sandi baru; sandi baru berhasil disimpan, bisa login.",
+"Tautan reset dipakai dua kali / kedaluwarsa → ditolak dengan pesan jelas.",
+"Batas kirim reset (throttle) bekerja.",
+"Setelah ganti sandi, sesi/perangkat lama tetap/di-logout sesuai aturan yang diinginkan.",
+]],
+["Autentikasi 2 Langkah (2FA)",[
+"Buka /2fa: QR code + kunci manual tampil; scan dengan aplikasi authenticator.",
+"Masukkan kode benar → 2FA aktif; kode pemulihan ditampilkan.",
+"Kode salah → ditolak dengan pesan jelas.",
+"Unduh kode pemulihan (CSV) bekerja; tampilkan & buat ulang kode pemulihan perlu konfirmasi sandi.",
+"Logout lalu login → diminta kode 2FA (/2fa/kode); kode benar masuk, kode salah ditolak.",
+"Login memakai kode pemulihan bekerja dan kode itu hangus setelah dipakai.",
+"Matikan 2FA bekerja (dengan konfirmasi).",
+"! Akun Admin/Owner: rekomendasi / kewajiban 2FA tampil sesuai aturan.",
+"@ Admin: 'Reset 2FA' pengguna yang kehilangan HP bekerja dan tercatat di audit.",
+]],
+]},
+
+{id:"onboard",t:"3. Onboarding, Workspace & Trial",g:[
+["Alur pertama kali",[
+"! Setelah daftar, user diarahkan ke pembuatan workspace (/onboarding) atau dashboard sesuai pilihan.",
+"Buat workspace: nama kosong/terlalu panjang/emoji → validasi benar.",
+"Workspace pertama otomatis mendapat Trial 7 hari kapasitas setara Grow.",
+"Workspace kedua milik pemilik yang sudah pernah trial → TIDAK dapat trial lagi (jatuh ke paket default).",
+"Tur pengenalan (tutorial langkah demi langkah) muncul sekali; bisa dilewati; tidak muncul lagi setelah selesai.",
+"Checklist 'Mulai di sini' di dashboard: langkah 1 Tautkan nomor, 2 Kirim pesan, 3 Sambungkan aplikasi — status centang ikut berubah.",
+"Tanpa workspace: menu terkunci (ikon gembok) dan mengarahkan ke onboarding.",
+"~ Di HP: tur pengenalan tidak menutupi tombol penting, bisa ditutup.",
+]],
+["Ganti workspace",[
+"Pemilih workspace di sidebar menampilkan semua workspace milik user.",
+"Ganti workspace → seluruh data (inbox, kontak, deals, tagihan) berubah sesuai workspace baru.",
+"! Pastikan data workspace A TIDAK muncul di workspace B (cek kontak, chat, deal, produk, API key).",
+"Tombol 'Buat workspace baru' bekerja.",
+"~ Di HP: pemilih workspace mudah diakses (lembar bawah/partial mobile-workspace).",
+]],
+["Masa trial & status langganan",[
+"Banner sisa trial tampil dengan hitungan hari benar.",
+"Trial habis → banner kunci/peringatan tampil; fitur kirim diblokir tapi data tetap bisa DILIHAT (aturan: GET boleh, selain GET ditolak).",
+"Semua tombol aksi (simpan/kirim/hapus) saat langganan habis → dialihkan ke halaman tagihan dengan pesan jelas, tidak error 500.",
+"Pelanggan berhenti tetap bisa membuka riwayat pesan dan mengunduh datanya.",
+"Menu terkunci tampil gembok dan klik mengarah ke halaman paket.",
+]],
+]},
+
+{id:"dash",t:"4. Dashboard (Ringkasan)",g:[
+["Halaman /dashboard",[
+"! Kartu statistik tampil: Sesi terhubung, Terkirim bulan ini, Diterima bulan ini, Gagal bulan ini — angka masuk akal.",
+"Persen kuota bulan ini benar; jika kuota tanpa batas tampil 'kuota tanpa batas'.",
+"Grafik 'Aktivitas 7 hari terakhir': batang Masuk/Keluar sesuai data; tooltip benar; ada keterangan warna.",
+"Daftar 'Sesi WhatsApp': nomor & status tampil; tautan 'Kelola' bekerja.",
+"Tabel 'Pesan terbaru' tampil; tautan 'Semua riwayat' bekerja; jika kosong tampil pesan 'Belum ada pesan'.",
+"Kartu onboarding 'Selamat datang / Masa trial Anda' muncul sesuai kondisi.",
+"Bagian 'Menerima pesan masuk' tampil sesuai kondisi.",
+"Dashboard user baru (tanpa data) tidak error dan tidak menampilkan angka aneh (NaN, -0).",
+"~ Di HP: tampil versi mobile-overview (kartu ringkas), tidak ada tabel yang meluber.",
+]],
+["Halaman Ringkasan CRM (/ringkasan)",[
+"! Halaman terbuka; angka (percakapan, deal, tugas, tagihan) sesuai kondisi sebenarnya.",
+"Filter periode / user bekerja dan angka berubah.",
+"Tautan di kartu mengarah ke halaman yang tepat.",
+"Tampilan kosong (workspace baru) tidak rusak.",
+]],
+]},
+
+{id:"nav",t:"5. Navigasi, Layout & Tampilan Umum (semua halaman)",g:[
+["Sidebar & header (desktop)",[
+"! Semua menu sidebar bisa diklik dan membuka halaman yang benar: Ringkasan, Inbox, Deals, Tugas, Laporan, Kontak, Segmen, Tagihan, Produk, Kampanye, Otomasi, Tautan pelacak, Dashboard, Nomor WhatsApp, Kirim Pesan, Riwayat Pesan, Template, Berhenti Berlangganan, API Keys, Webhooks, Dokumentasi, Pengaturan CRM, Pengaturan WhatsApp, Langganan, Add-On, Bantuan, Profil.",
+"Menu yang aktif ter-highlight sesuai halaman yang dibuka (termasuk halaman detail).",
+"Tombol ciutkan/tampilkan sidebar bekerja dan pilihan diingat; posisi scroll sidebar diingat.",
+"Menu yang butuh fitur paket (mis. Deals, Kasir) menampilkan gembok bila paket tidak punya fitur itu.",
+"Lonceng notifikasi: jumlah belum dibaca benar; klik membuka daftar; 'Baca semua' bekerja; klik notifikasi membuka halaman terkait.",
+"Menu akun (avatar): Profil saya, Pengaturan, Langganan, Admin (hanya admin), Logout.",
+"Pemilih bahasa dan pemilih tema bekerja dan pilihan diingat setelah refresh.",
+"Judul halaman (tab browser) sesuai halaman.",
+"Tombol 'Kembali' di header (mobile) mengarah ke halaman induk yang masuk akal.",
+"Banner di atas (verifikasi email, trial, langganan habis, tagihan pending, sesi perlu dihubungkan) tidak saling tumpang tindih.",
+"Tidak ada teks tertimpa/terpotong di semua halaman pada lebar 1280, 1024, 768.",
+"Semua teks tampil dalam bahasa yang dipilih; tidak ada campur ID-EN aneh atau kunci terjemahan mentah.",
+"Tombol Tab/Enter/Esc: dialog bisa ditutup dengan Esc; fokus keyboard terlihat; urutan Tab wajar.",
+]],
+["Mobile — dock bawah & layout",[
+"~ Dock bawah muncul: Beranda, Inbox, tombol '+' di tengah, Deals, Pengaturan.",
+"~ Tombol '+' membuka lembar 'Buat baru': Chat WA Baru, Tambah Deal, Tambah Kontak, Tagihan Kasir, Broadcast, Nomor WA — semua tautan benar.",
+"~ Menu yang terkunci paket di dock menampilkan gembok dan mengarah ke halaman paket.",
+"~ Lembar 'Buat baru' bisa ditutup (tombol ×, tap di luar, tombol Back).",
+"~ Dock tidak menutupi tombol/isi halaman di bagian bawah (ada ruang kosong cukup).",
+"~ Saat keyboard HP muncul, dock/elemen tetap wajar (tidak melompat, tidak menutupi kolom ketik).",
+"~ Halaman Pengaturan mobile (/pengaturan) punya tab Workspace, Langganan, Akun, Bantuan; semua tab bekerja.",
+"~ Tombol & tautan minimal sebesar jempol (±44px); tidak ada tombol saling berdempetan.",
+"~ Putar layar (portrait ⇄ landscape): layout tidak rusak.",
+"~ Tidak ada scroll horizontal di halaman mana pun (kecuali tabel yang memang bisa digeser).",
+"~ Tabel lebar bisa digeser ke samping atau berubah jadi kartu, isinya tetap terbaca.",
+"~ Dialog/modal tidak lebih tinggi dari layar; tombol Simpan/Batal tetap terlihat tanpa menggeser jauh.",
+"~ Pull-to-refresh / gestur geser tidak memicu aksi tak sengaja.",
+"~ Zoom teks sistem besar (font besar) tidak merusak layout.",
+]],
+["Tema, bahasa & aksesibilitas",[
+"Tema Terang/Gelap/Otomatis: semua halaman terbaca; tidak ada ikon/teks 'hilang'.",
+"Bahasa EN: cek 10 halaman utama — tidak ada teks Indonesia tersisa atau kalimat terpotong karena lebih panjang.",
+"Format tanggal, jam, dan angka (Rp, titik ribuan) konsisten dan sesuai bahasa.",
+"Zona waktu workspace dipakai benar untuk tampilan jam (cek pesan, tugas, jam operasional).",
+"Gambar punya teks alternatif; tombol ikon punya label (aria-label) — cek dengan screen reader bila memungkinkan.",
+"Kontras warna teks cukup (tidak abu-abu pucat di latar putih).",
+]],
+]},
+
+{id:"sessions",t:"6. Nomor WhatsApp (Sesi)",g:[
+["Halaman /sessions",[
+"! Daftar sesi tampil: nama, nomor, status (terhubung / menunggu / terputus).",
+"! Tambah sesi baru → sesi muncul dengan status awal.",
+"Tambah sesi melebihi batas paket (Spark/Grow 1, Peak 3) → ditolak dengan pesan jelas + saran upgrade.",
+"! Tombol 'Hubungkan' → QR code muncul; scan dengan WhatsApp HP → status berubah Terhubung otomatis (tanpa refresh).",
+"QR kedaluwarsa → QR baru dibuat otomatis / ada tombol muat ulang.",
+"Pernyataan risiko (gerbang risiko) tampil sebelum menghubungkan; harus disetujui dulu; tersimpan.",
+"Masa pemanasan (warm-up) nomor baru tampil jelas; tombol 'Lewati pemanasan' bekerja dengan peringatan.",
+"Putuskan (disconnect) → status berubah, bisa dihubungkan lagi tanpa scan ulang.",
+"Logout WhatsApp → perlu scan ulang; konfirmasi muncul sebelum aksi.",
+"Hapus sesi → konfirmasi; data sesi hilang; pesan lama tetap/hilang sesuai aturan.",
+"Status sesi diperbarui otomatis (polling) tanpa refresh; indikator tidak 'menggantung'.",
+"Banner global 'sesi perlu dihubungkan' muncul jika nomor terputus > 2 menit dan hilang setelah tersambung.",
+"Nomor terputus saat kirim pesan → pesan gagal dengan alasan jelas, bukan diam saja.",
+"Riwayat kejadian sesi (disconnect reason) tampil benar.",
+"~ Di HP: QR cukup besar untuk discan dari layar lain; tombol tidak terpotong.",
+]],
+]},
+
+{id:"msg",t:"7. Kirim Pesan, Riwayat, Template & Opt-out",g:[
+["Kirim pesan (/messages/compose)",[
+"! Kirim pesan teks ke nomor valid → status berubah antri → terkirim → dibaca; pesan sampai di HP.",
+"Nomor format macam-macam (08xx, +628xx, 628xx, ada spasi/strip) → dinormalkan benar.",
+"Nomor tidak valid / bukan WhatsApp → pesan gagal dengan alasan jelas.",
+"Pesan kosong / terlalu panjang → validasi.",
+"Kirim gambar, dokumen, video: batas ukuran & tipe file ditegakkan, pesan error jelas.",
+"Pilih nomor pengirim (jika punya >1 sesi) bekerja.",
+"Pakai template + variabel ({nama}, dll.) → terisi benar di pesan terkirim.",
+"! Kuota harian (Spark 100, Grow 250, Peak 500) tercapai → ditolak dengan pesan jelas, bukan gagal diam-diam.",
+"Kuota bulanan tercapai → ditolak dengan pesan jelas; penghitung di dashboard cocok.",
+"Penerima sudah Opt-out → pesan ditolak/dilewati dengan alasan jelas.",
+"Tombol kirim di-klik dobel → pesan tidak terkirim dua kali.",
+"~ Di HP: form kirim muat di layar, keyboard tidak menutup tombol Kirim.",
+]],
+["Riwayat pesan (/messages)",[
+"Daftar pesan tampil dengan filter (status, arah, tanggal, nomor) dan pencarian.",
+"Paginasi/scroll tak terbatas bekerja; urutan terbaru di atas.",
+"Buka detail pesan (/messages/{id}): isi, status, waktu, error (jika gagal) tampil.",
+"Pesan masuk dan keluar bisa dibedakan jelas.",
+"Pesan lama melewati masa retensi (30/90/365 hari) sudah terhapus sesuai paket.",
+"~ Di HP: baris pesan terbaca, tidak terpotong; detail bisa dibuka.",
+]],
+["Template (/templates)",[
+"Daftar template tampil; template bawaan ada dan bisa disalin ('Salin ke template saya').",
+"Buat template baru → tersimpan, muncul di daftar dan di pilihan kirim.",
+"Ubah dan hapus template (dengan konfirmasi) bekerja.",
+"Variabel dalam template dikenali dan dicontohkan.",
+"Nama kosong/duplikat → validasi.",
+]],
+["Berhenti Berlangganan / Opt-out",[
+"Daftar nomor opt-out tampil.",
+"Hapus nomor dari daftar opt-out (dengan konfirmasi) bekerja.",
+"Penerima membalas kata kunci berhenti (mis. STOP) → otomatis masuk daftar opt-out.",
+"Halaman berhenti berlangganan dari email (tautan bertanda tangan) bekerja; tautan rusak/kedaluwarsa ditangani.",
+]],
+]},
+
+{id:"inbox",t:"8. Inbox Tim (Shared Inbox) — fitur utama",g:[
+["Daftar percakapan (/inbox)",[
+"! Pesan masuk dari HP lain muncul di Inbox tanpa refresh (poll) dengan penanda belum dibaca.",
+"Tab/filter: Semua, Milik saya, Belum ditugaskan, Terbuka, Selesai, Ditunda, dll. — hasil benar.",
+"Pencarian percakapan (nama/nomor/isi) bekerja.",
+"Filter label, prioritas, status, penanggung jawab bekerja dan bisa digabung.",
+"Jumlah belum dibaca (badge) turun saat percakapan dibuka dan naik saat ada pesan baru.",
+"Daftar panjang (ratusan chat): scroll tetap lancar, tidak ada item ganda/hilang saat ada pesan baru masuk.",
+"Percakapan baru naik ke posisi teratas; saat sedang scroll, daftar tidak 'loncat' mengganggu.",
+"Aksi massal (bulk): pilih beberapa percakapan → ubah status / tugaskan / label; maksimum 50 sekaligus; pesan jelas bila lebih.",
+"Suara/notifikasi pesan baru (browser push) — izin diminta, notifikasi muncul, klik membuka percakapan yang benar.",
+"~ Di HP: daftar dan detail berupa dua layar terpisah; tombol Back kembali ke daftar tanpa kehilangan posisi scroll.",
+]],
+["Dalam percakapan (/inbox/{id})",[
+"! Isi chat tampil urut, waktu benar, bubble masuk/keluar jelas.",
+"! Kirim balasan teks → muncul langsung (optimistic), lalu berstatus terkirim/gagal; sampai di HP.",
+"Balasan gagal → ada tombol 'Coba lagi' dan berhasil terkirim ulang tanpa duplikat.",
+"Kirim lampiran: gambar, dokumen, video, voice note; pratinjau tampil; batas ukuran jelas.",
+"Terima media: gambar/video/dokumen/stiker/lokasi/kontak tampil dan bisa dibuka/diunduh.",
+"Balas dengan kutip (reply to message) bekerja dan kutipan tampil.",
+"Draf ketikan tersimpan saat pindah percakapan lalu kembali.",
+"Teks berisi tag HTML / skrip (<script>) tampil sebagai teks biasa (aman, tidak dieksekusi).",
+"Link, emoji, baris baru, teks sangat panjang tampil rapi (tidak merusak layout).",
+"Ambil alih (Claim) percakapan bekerja; dua CS klaim bersamaan → hanya satu yang berhasil, yang lain dapat pesan jelas.",
+"Tugaskan (Assign) ke anggota lain bekerja; anggota tsb mendapat notifikasi.",
+"Membalas chat milik orang lain → muncul konfirmasi dulu.",
+"Ubah status (Terbuka/Selesai/Ditunda) dan prioritas bekerja; riwayat tampil di timeline.",
+"Pasang & lepas Label bekerja; label baru dari pengaturan muncul di sini.",
+"Catatan internal (kuning): tambah, mention rekan, hapus catatan milik sendiri; pelanggan TIDAK melihat catatan.",
+"Balasan Cepat/Snippet: ketik '/' → saran muncul, navigasi panah+Enter bekerja, variabel terisi.",
+"Tindak lanjut (follow-up) dari percakapan: buat jadwal, pilihan cepat (1 jam, besok, dll.) bekerja.",
+"Timeline kejadian (claim, assign, status, catatan) tampil lengkap dan urut.",
+"Panel info kontak di samping: nama, nomor, label, deal terkait, tagihan terkait tampil dan bisa diedit.",
+"Pembuatan Deal dari percakapan dan 'Mulai chat' dari kontak bekerja.",
+"Tombol 'Buat tagihan' (Kasir) dari chat membuka form tagihan.",
+"Kontak yang diblokir / opt-out → kolom ketik terkunci dengan penjelasan.",
+"Langganan habis → kolom ketik dikunci dengan pesan yang benar (membaca tetap bisa).",
+"Saat sesi WhatsApp terputus → muncul peringatan di percakapan, kirim ditahan dengan alasan jelas.",
+"~ Di HP: kolom ketik naik mengikuti keyboard; tombol kirim terlihat; bubble tidak meluber; lampiran bisa dipilih dari galeri/kamera.",
+"~ Di HP: header percakapan (nama, menu aksi) tidak terpotong; menu aksi bisa dibuka satu tangan.",
+]],
+["Jam operasional, balas otomatis & SLA",[
+"Pesan masuk di luar jam operasional → balasan otomatis terkirim sesuai teks pengaturan (sekali, tidak spam).",
+"Balasan sambutan/auto-reply tidak membalas dirinya sendiri (tidak loop).",
+"Auto-assign (pembagian otomatis) membagi percakapan baru sesuai aturan.",
+"Anggota set 'Tidak tersedia' → tidak mendapat penugasan otomatis; kembali tersedia otomatis/manual sesuai aturan.",
+"Peringatan SLA (balas terlalu lama) muncul bila diatur.",
+]],
+]},
+
+{id:"contacts",t:"9. Kontak, Segmen & Impor",g:[
+["Daftar & detail kontak (/kontak)",[
+"! Daftar kontak tampil; pencarian nama/nomor/email bekerja; filter & urutan bekerja.",
+"Tambah kontak manual: nama, nomor, email, label, kolom kustom — tersimpan; nomor ganda ditolak/digabung dengan pesan jelas.",
+"Ubah kontak langsung (inline) tersimpan; validasi 422 menandai kolom yang salah.",
+"Detail kontak (/kontak/{id}): riwayat percakapan, deal, tugas, tagihan, catatan tampil.",
+"Blokir / buka blokir kontak bekerja dan mempengaruhi kirim pesan.",
+"Gabung kontak ganda (merge) menggabungkan riwayat tanpa kehilangan data.",
+"Tanggal pertama/terakhir kontak benar.",
+"Ekspor kontak (CSV) menghasilkan file benar, bahasa karakter (UTF-8) tidak rusak, angka telepon tidak jadi notasi ilmiah.",
+"~ Di HP: tabel kontak jadi kartu/daftar terbaca; tombol Tambah (+) mudah dijangkau.",
+]],
+["Impor kontak (CSV)",[
+"! Unggah CSV benar → pratinjau + pemetaan kolom (field mapping) → impor berhasil; jumlah sukses/gagal tampil.",
+"CSV salah format / kolom kosong / nomor tidak valid → laporan baris gagal jelas.",
+"CSV besar (ribuan baris) → proses berjalan di latar, status impor bisa dipantau.",
+"Centang persetujuan (consent) impor wajib bila diminta.",
+"Impor kontak yang sudah ada → tidak menggandakan.",
+"File bukan CSV (mis. .exe, .pdf) → ditolak.",
+]],
+["Segmen (/kontak/segmen)",[
+"Buat segmen dengan aturan (kondisi) — pratinjau jumlah anggota muncul dan benar.",
+"Simpan, ubah, hapus segmen bekerja; batas jumlah segmen sesuai paket (5 / 30 / 100).",
+"Kondisi AND/OR, kolom kustom, label, status deal — hasil sesuai.",
+"Segmen dipakai di Kampanye dan otomasi tanpa error.",
+]],
+]},
+
+{id:"sales",t:"10. Deals / Pipeline, Tugas & Produk (CRM Sales)",g:[
+["Papan Deals (/deals)",[
+"! Papan Kanban tampil dengan kolom tahap; kartu deal tampil nama, nilai, kontak.",
+"! Geser (drag & drop) kartu antar tahap → tahap berubah, nilai total kolom ikut berubah, tetap setelah refresh.",
+"Drag di HP (sentuh) bekerja atau ada alternatif 'Pindah ke tahap' yang jelas.",
+"Tambah deal baru (tombol + / ?baru=1): kontak, produk, nilai, tahap, penanggung jawab, tanggal — tersimpan.",
+"Kolom dengan banyak deal: muat lebih banyak (scroll/tombol) bekerja; papan diperbarui otomatis saat rekan mengubah.",
+"Pilih pipeline lain (jika >1) bekerja; batas pipeline paket (1/3/10).",
+"Tampilan Daftar vs Papan bisa diganti; filter (penanggung jawab, tahap, tanggal, sumber) bekerja.",
+"Pencarian deal bekerja.",
+"Tandai Berhasil (Won) → dialog; deal pindah ke Berhasil; angka laporan ikut berubah.",
+"Tandai Gagal (Lost) → wajib pilih alasan kalah; tersimpan; bisa dibuka kembali (Reopen).",
+"Hapus deal (dengan konfirmasi) & pulihkan (restore) dari 'deal terhapus' bekerja.",
+"Aksi massal deal & ekspor deal berfungsi.",
+"Deal yang terlalu lama di satu tahap (rot) ditandai sesuai pengaturan hari.",
+]],
+["Detail deal (/deals/{id})",[
+"Informasi deal, kontak terkait, produk/item (tambah-hapus-ubah jumlah & harga; total benar).",
+"Catatan deal: tambah dan hapus; timeline aktivitas (pindah tahap, catatan) lengkap.",
+"Kolom kustom deal tampil sesuai tipe (teks, angka, tanggal, pilihan) dan tersimpan.",
+"Buat tugas dari deal dan buat tagihan dari deal bekerja.",
+"Tombol ke Inbox (percakapan terkait) membuka percakapan yang benar.",
+"~ Di HP: detail deal bisa discroll, tombol aksi terlihat, tidak ada bagian terpotong.",
+]],
+["Tugas (/tugas) & Tindak lanjut",[
+"Daftar tugas: tab (Hari ini, Terlambat, Mendatang, Selesai) menampilkan tugas yang benar.",
+"Buat tugas: judul, jadwal, pemilik, kontak/deal terkait — tersimpan; zona waktu benar.",
+"Tandai selesai (dialog hasil), batalkan, jadwalkan ulang bekerja.",
+"/tindak-lanjut dialihkan permanen ke /tugas.",
+"Notifikasi tugas jatuh tempo muncul tepat waktu.",
+]],
+["Produk (/produk)",[
+"Daftar produk; tambah produk (nama, harga, SKU, gambar) tersimpan.",
+"Gambar produk tampil (URL bertanda tangan); unggah gambar terlalu besar ditolak dengan pesan jelas.",
+"Ubah & hapus produk bekerja; batas produk paket (100 / 1.000 / 10.000).",
+"Impor produk (CSV) bekerja; format salah → laporan jelas.",
+"Produk dipakai di deal dan tagihan dengan harga benar.",
+]],
+]},
+
+{id:"cashier",t:"11. Kasir & Tagihan Pelanggan (QRIS / VA / Transfer)",g:[
+["Pengaturan Kasir (/pengaturan/kasir)",[
+"! Spark: hanya Kasir Manual (QRIS statis & transfer rekening). Grow/Peak: Kasir Otomatis (QRIS dinamis & VA) juga tersedia.",
+"Isi data rekening / unggah QRIS statis → tersimpan, tampil di pratinjau.",
+"Pilih gateway (Midtrans, Xendit, Doku, Duitku, Faspay, iPaymu) → isi kunci → tombol 'Tes koneksi' memberi hasil jelas (berhasil/gagal + alasan).",
+"Kunci gateway yang tersimpan tidak ditampilkan penuh (disamarkan).",
+"Pengingat otomatis tagihan (reminder) bisa diatur dan benar-benar terkirim sesuai jadwal.",
+"Fitur Kasir di paket tanpa akses → menu/halaman terkunci dengan penjelasan.",
+]],
+["Membuat & mengelola tagihan (/tagihan)",[
+"! Buat tagihan dari percakapan: pilih produk/isi item, diskon, pajak, jatuh tempo → pratinjau total benar.",
+"Tagihan terkirim ke pelanggan di chat WhatsApp berisi tautan bayar yang benar.",
+"Daftar tagihan: filter status (Menunggu, Dibayar, Kedaluwarsa, Dibatalkan), cari, ekspor CSV.",
+"Detail tagihan: item, total, riwayat, status, tautan ke percakapan/kontak.",
+"Tandai lunas manual (transfer) bekerja dengan konfirmasi; status berubah, pelanggan mendapat konfirmasi.",
+"Batalkan tagihan & kirim ulang tagihan bekerja (kirim ulang dibatasi).",
+"Tagihan yang sudah lunas tidak bisa dibatalkan.",
+"Deal otomatis pindah tahap 'tagihan dibuat' / 'lunas' bila diatur.",
+]],
+["Halaman bayar pelanggan (/bayar/{token}) — tes sebagai pelanggan",[
+"! Buka tautan bayar tanpa login: rincian tagihan, nama bisnis, total tampil benar.",
+"Pilih metode: QRIS, Virtual Account (bank), transfer manual — kode QR / nomor VA muncul.",
+"QR bisa discan dengan e-wallet sandbox; setelah bayar status halaman berubah otomatis menjadi Lunas.",
+"! Notifikasi gateway (webhook) masuk → tagihan otomatis lunas di CRM + pesan konfirmasi terkirim.",
+"Tagihan kedaluwarsa / dibatalkan → halaman menjelaskan, tidak bisa dibayar.",
+"Tautan token salah → halaman tidak ditemukan yang rapi, tidak membocorkan data.",
+"Unduh struk (PDF) setelah lunas: isi & angka benar, tautan bertanda tangan.",
+"~ Di HP: halaman bayar sangat jelas, tombol salin nomor VA bekerja, QR cukup besar.",
+]],
+]},
+
+{id:"campaign",t:"12. Kampanye (Broadcast) & Otomasi",g:[
+["Kampanye (/kampanye)",[
+"! Buat kampanye baru: nama, pilih target (segmen/label/semua), isi pesan, lampiran, jadwal.",
+"Variabel & spintax ({a|b}) menghasilkan variasi pesan; pratinjau penerima & isi bekerja.",
+"Jumlah penerima & estimasi sesuai kuota; melebihi kuota harian (100/250/500) → peringatan jelas/dijadwalkan bertahap.",
+"Mulai, Jeda, Lanjutkan, Batalkan kampanye bekerja dan status benar.",
+"Daftar penerima: status (antri, terkirim, gagal, dilewati opt-out) benar; laporan angka akurat.",
+"Kontak opt-out/diblokir otomatis dilewati.",
+"Edit kampanye yang sudah berjalan dibatasi dengan pesan jelas.",
+"Kampanye mengirim dengan jeda wajar (tidak sekaligus) agar nomor aman.",
+"Paket Peak: kampanye mendapat prioritas antrean.",
+"~ Di HP: editor kampanye bisa dipakai, pratinjau tidak terpotong.",
+]],
+["Otomasi (/otomasi)",[
+"Buat otomasi dari template ('dari template') & dari nol; batas otomasi aktif paket (3 / 20 / 100).",
+"Pemicu (trigger), Kondisi (AND/OR), Aksi (kirim pesan, buat tugas, pindah tahap, beri label, dll.) bisa dipilih dan disimpan.",
+"Aktifkan/nonaktifkan (toggle) bekerja.",
+"! Uji kejadian nyata: pemicu terjadi → aksi benar-benar dijalankan sekali (tidak dobel).",
+"Riwayat eksekusi (runs) menampilkan sukses/gagal dengan alasan.",
+"Otomasi tidak membuat loop pesan tak berhenti.",
+"Hapus otomasi (konfirmasi) bekerja.",
+]],
+["Tautan Pelacak (/integrasi/tautan-pelacak)",[
+"Buat tautan pelacak: kode pendek (/l/xxxx) membuka tujuan yang benar dan mencatat klik.",
+"Atribusi sumber lead tercatat di kontak/deal.",
+"Tautan dinonaktifkan → halaman 'tautan tidak aktif' tampil rapi.",
+"Batas tautan paket (3 / 20 / 100).",
+]],
+]},
+
+{id:"reports",t:"13. Laporan & Analitik CRM",g:[
+["Laporan (/laporan)",[
+"Laporan percakapan: jumlah, waktu respons, per anggota — angka cocok dengan data nyata.",
+"Laporan penjualan: funnel, peringkat sales, nilai Berhasil/Gagal, alasan kalah.",
+"Laporan sumber, kampanye, SLA, heatmap jam sibuk, produk, target — semua tab terbuka tanpa error.",
+"Filter tanggal & anggota mengubah angka dengan benar; rentang tanggal terbalik ditangani.",
+"Ekspor laporan (CSV) bekerja; isi file sama dengan layar.",
+"Data kosong → tampilan kosong yang rapi (bukan grafik rusak/NaN).",
+"Target penjualan bulanan: capaian vs target dan persen benar.",
+"~ Di HP: grafik tidak terpotong dan bisa dibaca; tabel bisa digeser.",
+]],
+]},
+
+{id:"crmset",t:"14. Pengaturan CRM (/pengaturan/…)",g:[
+["Semua tab pengaturan",[
+"Workspace: ubah nama, zona waktu, bahasa; tersimpan.",
+"Transfer kepemilikan (owner): butuh konfirmasi sandi; pemilik baru efektif; pemilik lama menjadi anggota.",
+"Anggota: undang lewat email, ubah peran (Admin/Member/dll.), hapus anggota; batas kursi paket (2 / 5 / 10).",
+"Undangan (/undangan/{token}): penerima membuka tautan → login/daftar → bergabung ke workspace; tautan kedaluwarsa/dipakai ditolak.",
+"Jam operasional: atur hari & jam; teks balasan otomatis di luar jam tersimpan.",
+"Balasan cepat (snippet): buat, ubah, hapus; dukung variabel & lampiran.",
+"Label: buat, ubah warna/nama, hapus (konfirmasi), efek pada percakapan benar.",
+"Kasir: lihat bagian 11.",
+"Data: info penyimpanan/retensi data tampil benar.",
+"Pipeline: tambah, ubah urutan, ubah tahap (nama, probabilitas, hari 'rot', warna), arsip/pulihkan, jadikan default; pindahkan deal bila tahap dihapus.",
+"Custom fields: buat tipe (teks, angka, tanggal, pilihan, dll.), urutan, arsip/pulihkan; batas per paket (10 / 30 / 100).",
+"Alasan kalah: tambah, ubah, hapus.",
+"Target penjualan: isi per anggota per bulan; 'salin bulan lalu' bekerja.",
+"Visibilitas data: atur siapa melihat data siapa; uji dengan akun Member bahwa batasan benar-benar berlaku.",
+"SLA: atur batas waktu balas; peringatan muncul.",
+"! Hak akses: akun Member TIDAK bisa membuka pengaturan sensitif/URL admin walau mengetik alamatnya langsung.",
+"~ Di HP: tiap tab pengaturan bisa dibuka dan disimpan.",
+]],
+]},
+
+{id:"wasettings",t:"15. Pengaturan WhatsApp, API Key, Webhook & Docs",g:[
+["Pengaturan WhatsApp (/settings)",[
+"Kartu Paket, Pesan bulan ini, Anggota tampil benar; tautan 'Kelola langganan' bekerja.",
+"Tabel 'Batas yang berlaku' (nomor WA, kuota bulanan, batas API) sesuai paket.",
+"Ubah nama workspace & nomor WA untuk tagihan → tersimpan.",
+"Tambah anggota (harus sudah pernah login) dengan peran Member/Admin; keluarkan anggota bekerja.",
+"Riwayat pemakaian per bulan tampil.",
+"Ekspor data workspace: minta ekspor → status Menunggu/Diproses/Siap; unduh bekerja; tautan kedaluwarsa menampilkan pesan; satu permintaan per 24 jam ditegakkan.",
+"! Hapus workspace: harus mengetik nama workspace; konfirmasi jelas; data benar-benar terhapus/dijadwalkan sesuai kebijakan.",
+]],
+["API Keys (/api-keys)",[
+"Buat API key (butuh email terverifikasi): key tampil SEKALI, tombol salin bekerja.",
+"Pilih izin/scope (api, crm:read, crm:write, otp) tersimpan benar.",
+"Batas jumlah key (2 / 5 / 10) ditegakkan.",
+"Hapus/cabut key → request dengan key itu langsung ditolak (401).",
+"Key terlihat disamarkan di daftar; waktu terakhir dipakai diperbarui.",
+]],
+["Webhooks (/webhooks)",[
+"Tambah webhook (URL, event); URL tidak valid / alamat internal (localhost) ditolak.",
+"Tombol Tes mengirim contoh event; hasil sukses/gagal tampil.",
+"Nonaktifkan/aktifkan dan hapus webhook bekerja.",
+"Event nyata (pesan masuk/status) sampai ke URL dengan tanda tangan yang benar; kegagalan dicoba ulang.",
+]],
+["REST API (uji dengan Postman/curl, header X-API-Key)",[
+"! GET /api/v1/health → OK tanpa error.",
+"Tanpa key / key salah → 401 dengan pesan jelas.",
+"Key tanpa izin yang sesuai → 403.",
+"Kirim pesan teks, media, bulk, template via API → pesan sampai; batas rate (60/120/300 per menit) → 429 bila dilampaui.",
+"Sessions API: buat, connect, QR, disconnect, logout, hapus bekerja.",
+"API CRM: upsert kontak, buat/ubah deal, pindah tahap, won, lost, buat tugas, lihat pipeline & kontak — bekerja dan data muncul di dashboard.",
+"OTP: kirim lalu verifikasi kode; kode salah/kedaluwarsa ditolak; batas percobaan ditegakkan.",
+"Format error JSON konsisten (bahasa Inggris), tidak membocorkan detail internal.",
+]],
+["Dokumentasi",[
+"Semua halaman /docs terbuka; contoh kode sesuai API yang benar; tautan internal tidak patah.",
+"Pencarian/daftar isi bekerja; tampilan mobile terbaca.",
+]],
+]},
+
+{id:"billing",t:"16. Langganan, Pembayaran Paket & Add-On",g:[
+["Halaman Langganan (/billing)",[
+"! Paket aktif, tanggal berakhir, sisa hari, kuota tampil benar.",
+"Halaman paket (/billing/paket): Spark / Grow / Peak benar harga & fitur; durasi 1/3/6/12 bulan dengan diskon 0/15/20/25%.",
+"! Promo 50% tagihan pertama berlaku bila slot masih ada dan hanya 1x seumur hidup per Owner.",
+"Checkout: pilih paket → invoice dibuat dengan total benar (cek diskon, pembulatan, pajak bila ada).",
+"Isi data penagihan (nama, alamat, NPWP bila ada) tersimpan; butuh email terverifikasi.",
+"! Bayar via Midtrans (sandbox): Snap terbuka, metode (VA/QRIS/e-wallet/kartu) bekerja.",
+"Setelah bayar → status invoice otomatis menjadi Lunas, paket aktif/bertambah, kuota berubah, email 'pembayaran diterima' terkirim.",
+"Halaman invoice menampilkan status terkini (polling /status) tanpa refresh.",
+"Batalkan invoice menunggu → status Dibatalkan; bisa buat baru.",
+"Bayar dua kali / refresh saat bayar → tidak memperpanjang ganda.",
+"Upgrade dan downgrade paket di tengah periode: perhitungan sisa/selisih jelas dan benar.",
+"Riwayat tagihan (/billing/riwayat): daftar, status, unduh/lihat invoice.",
+"Peringatan 'tagihan pending' tampil sampai dibayar atau dibatalkan.",
+"Email tagihan terbit & masa berlaku habis terkirim dengan isi benar.",
+]],
+["Add-On (/billing/add-ons) & Checkout Custom",[
+"Halaman add-on: pilih tambahan (nomor WA, kursi, kuota, dll.); pratinjau harga benar sebelum bayar.",
+"Checkout add-on → bayar → add-on aktif; batas bertambah di pengaturan; berulang (recurring) mengikuti langganan.",
+"Tautan checkout custom (/checkout/custom/{token}) dari admin: halaman tampil, nominal benar, lanjut bayar bekerja.",
+"Tautan custom yang dibatalkan/kedaluwarsa menampilkan pesan jelas.",
+]],
+]},
+
+{id:"paytest",t:"16B. Uji Pembayaran Sandbox (uang uji, bukan uang asli)",g:[
+["Persiapan wajib sebelum tes bayar",[
+"! Pastikan MODE SANDBOX aktif, bukan produksi: Admin > Keuangan > Midtrans → mode sandbox, tombol 'Tes koneksi' berhasil. Jangan pernah tes dengan kunci LIVE.",
+"! Isi Server Key & Client Key sandbox Midtrans dari dashboard sandbox (bukan kunci produksi). Kunci tersimpan dan tampil disamarkan.",
+"! Webhook harus bisa dicapai internet: URL notifikasi (/api/payment/midtrans/notify) sudah dipasang di dashboard sandbox Midtrans. Kalau tes di laptop/localhost, pakai tunnel (mis. ngrok) — tanpa ini status tidak akan berubah otomatis.",
+"Catat dua jalan konfirmasi: (a) webhook dari Midtrans, (b) halaman invoice yang menanyakan status sendiri saat pelanggan kembali dari Snap. Tes keduanya (matikan tunnel untuk tes jalur b).",
+"Siapkan simulator sandbox Midtrans (simulator.sandbox.midtrans.com) untuk 'membayar' VA/QRIS/e-wallet palsu. Kartu uji sukses Midtrans: 4811 1111 1111 1114, CVV 123, exp bulan apa saja di masa depan, OTP 112233. Skenario kartu ditolak/diblokir FDS: lihat daftar kartu uji resmi di dokumentasi Midtrans.",
+"Pakai akun owner khusus tes dan workspace khusus tes, supaya data uji tidak bercampur dengan pelanggan asli.",
+"Catat sebelum mulai: tanggal berakhir paket, sisa kuota, jumlah slot promo 50% — untuk dibandingkan setelah bayar.",
+]],
+["A. Bayar langganan paket (Pesanvo → pelanggan) — Midtrans Snap",[
+"! Pilih paket Spark 1 bulan → Checkout → invoice terbit → tombol Bayar membuka jendela Snap sandbox (bukan halaman produksi; alamat berisi 'sandbox').",
+"! Total di Snap SAMA PERSIS dengan total di invoice (cek diskon durasi, promo 50%, pembulatan).",
+"! Bayar sukses via VA (BCA/BNI/Mandiri/dll) dengan simulator → dalam hitungan detik invoice jadi Lunas, paket aktif, tanggal berakhir bertambah sesuai durasi.",
+"Bayar sukses via QRIS (simulator) → Lunas otomatis.",
+"Bayar sukses via e-wallet (GoPay/ShopeePay sandbox) → Lunas otomatis.",
+"Bayar sukses via kartu uji 4811 1111 1111 1114 (3DS, OTP 112233) → Lunas otomatis.",
+"Kartu ditolak (kartu uji 'deny') → invoice TIDAK lunas, pelanggan melihat pesan jelas dan bisa mencoba metode lain.",
+"Kartu 'challenge by FDS' → invoice tidak lunas sebelum disetujui (aturan: capture tapi fraud bukan 'accept' diabaikan).",
+"Tutup jendela Snap tanpa bayar → invoice tetap Menunggu; tombol Bayar lagi membuka Snap yang sama (token dipakai ulang selama belum kedaluwarsa).",
+"Biarkan VA kedaluwarsa (atau pakai simulator 'expire') → invoice jadi Kedaluwarsa/Gagal; tidak bisa dibayar; bisa buat invoice baru.",
+"Batalkan invoice di aplikasi lalu coba bayar lewat tautan Snap lama → harus ditolak/tidak mengaktifkan paket.",
+"Bayar invoice lewat jalur lambat: tutup halaman setelah bayar, tunggu, buka /billing → status sudah Lunas (webhook atau sinkronisasi).",
+"Matikan tunnel webhook lalu bayar → kembali ke halaman invoice → status Lunas lewat 'cek status' otomatis (jalur b).",
+"Tombol admin 'Cek status Midtrans' pada invoice yang menggantung menyelesaikannya dengan benar.",
+"! Email 'Pembayaran diterima' terkirim sekali saja (bukan dobel) dengan nominal, paket, dan periode yang benar.",
+"Notifikasi dalam aplikasi 'pembayaran berhasil' muncul; banner 'tagihan pending' hilang.",
+"Struk/invoice yang dilihat di Riwayat (/billing/riwayat) menampilkan status Lunas, tanggal bayar, metode.",
+"Lakukan untuk semua paket: Spark, Grow, Peak, dan semua durasi 1/3/6/12 bulan — cek total & diskon tiap kombinasi (0/15/20/25%).",
+]],
+["B. Promo & perhitungan uang (cek angka, bukan sekadar 'berhasil')",[
+"! Promo 50% tagihan pertama: pembayar pertama dapat diskon, pembayar ke-11 tidak; slot di landing/harga berkurang tepat satu setelah lunas.",
+"Promo hanya 1x seumur hidup per Owner: bayar kedua oleh owner yang sama tidak diskon 50%.",
+"Invoice promo yang dibatalkan/kedaluwarsa TIDAK menghabiskan slot (atau sesuai aturan yang diputuskan) — catat perilaku sebenarnya.",
+"Kombinasi diskon durasi + promo 50% menghasilkan total yang sesuai aturan; hitung manual dan cocokkan ke rupiah.",
+"Pajak/biaya admin (bila ada) tampil jelas dan ikut dalam gross_amount Midtrans.",
+"Nominal tanpa desimal/ pembulatan benar (tidak ada selisih Rp1 antara invoice dan Midtrans).",
+"Data penagihan (nama, alamat, NPWP) tampil di invoice yang diterbitkan.",
+]],
+["C. Upgrade, downgrade, perpanjang & add-on",[
+"! Upgrade Spark → Grow di tengah periode: selisih/sisa dihitung benar, bayar sandbox → paket & batas (kursi, kuota, pipeline) berubah seketika.",
+"Downgrade Grow → Spark: tidak merusak data; batas baru ditegakkan sesuai aturan (mis. kursi berlebih).",
+"Perpanjang paket sebelum habis: masa berlaku menambah (bukan menimpa) sisa hari.",
+"Bayar setelah paket habis (masa tenggang): paket aktif kembali, fitur terbuka, kirim pesan berfungsi lagi.",
+"! Add-on (nomor WA / kursi / kuota): pratinjau harga → bayar sandbox → batas bertambah; add-on berulang ikut tagihan berikutnya.",
+"Checkout custom (tautan dari admin): bayar sandbox → paket/add-on custom aktif sesuai kalkulator; nominal sama dengan yang dijanjikan admin.",
+"Tautan custom dibayar dua kali → tidak mengaktifkan ganda.",
+"Admin 'Tandai lunas' manual (untuk transfer) mengaktifkan paket yang sama seperti bayar otomatis, dan tercatat di Audit.",
+"VIP Onboarding Rp500.000: admin menerbitkan invoice → pelanggan bayar → status benar.",
+]],
+["D. Keamanan & ketahanan webhook pembayaran",[
+"! Webhook dengan tanda tangan (signature_key) SALAH → ditolak, invoice tidak berubah, tercatat 'rejected' di Log Pembayaran. (Uji dengan curl/Postman.)",
+"! Webhook dengan nominal (gross_amount) berbeda dari total invoice → tidak mengaktifkan paket; tercatat audit 'nominal tidak sama'.",
+"Webhook status 'pending' lalu diputar ulang sebagai 'settlement' (tanda tangan sama) → sistem menanyakan ke Midtrans dan TIDAK lunas karena kenyataannya belum bayar.",
+"Webhook yang sama dikirim 2–3 kali → invoice hanya diproses sekali, email hanya sekali, masa aktif tidak bertambah ganda.",
+"Webhook untuk order_id yang tidak ada → ditangani rapi (tercatat gagal), bukan error 500.",
+"Webhook tanpa order_id → balasan 400.",
+"Midtrans tidak bisa dihubungi saat konfirmasi → balasan 'retry' (503) untuk add-on/custom sehingga Midtrans mengirim ulang; tidak ada paket aktif palsu.",
+"Webhook datang SEBELUM halaman Snap selesai, atau sesudah invoice dibatalkan/kedaluwarsa → hasil tetap konsisten (diabaikan/ditolak dengan alasan).",
+"Pembayaran terlambat (sesudah batas waktu invoice) → perilaku sesuai aturan dan tercatat di log.",
+"Admin > Log Pembayaran: setiap percobaan di atas muncul dengan event, status (processed/ignored/rejected/failed), dan pesan error; data kartu/rahasia tidak tersimpan mentah.",
+"Kunci server tidak pernah muncul di HTML, JavaScript, atau response browser (cek DevTools > Network/Source).",
+]],
+["E. Kasir pelanggan (tagihan di chat) — gateway milik workspace",[
+"! Spark: hanya Kasir Manual. Grow/Peak: pengaturan gateway dinamis tersedia. Pastikan Spark tidak bisa memakai gateway otomatis.",
+"Untuk setiap gateway yang dijual, isi kredensial SANDBOX lalu 'Tes koneksi': Midtrans, Xendit, Doku, Duitku, Faspay, iPaymu — hasil berhasil/gagal dengan alasan jelas. (Pilih toggle sandbox/produksi di tiap gateway yang punya; Xendit memakai kunci uji sendiri.)",
+"! Buat tagihan di chat → QRIS dinamis muncul di halaman /bayar/{token} dan bisa discan simulator → tagihan Lunas otomatis + pesan konfirmasi terkirim ke pelanggan di WhatsApp.",
+"Virtual Account per bank: nomor VA muncul, tombol salin bekerja, bayar via simulator → Lunas otomatis.",
+"! Notifikasi gateway ke /api/cashier/{gateway}/{token} dengan tanda tangan/token salah → ditolak (Midtrans 403, Xendit callback token salah, dst.).",
+"Notifikasi gateway terkirim dua kali → tagihan tidak diproses ganda; deal tidak pindah tahap dua kali.",
+"Nominal notifikasi tidak sama dengan tagihan → tidak lunas.",
+"Tagihan kedaluwarsa lalu dibayar → perilaku sesuai aturan, terdata.",
+"Tagihan lunas → deal otomatis pindah ke tahap 'lunas'/'tagihan dibuat' sesuai pengaturan; laporan penjualan & pendapatan bertambah tepat.",
+"Pengingat otomatis (reminder) tagihan terkirim sesuai jadwal dan BERHENTI setelah lunas.",
+"Struk PDF setelah lunas bisa diunduh, nominal & nama bisnis benar.",
+"Tandai lunas manual (transfer) pada tagihan kasir bekerja dan dicatat siapa yang menandai.",
+"Admin > Kasir Pelanggan memperlihatkan transaksi tes tanpa menampilkan kunci rahasia.",
+]],
+["F. Pindah dari sandbox ke LIVE (checklist sebelum rilis)",[
+"! Ganti ke kunci produksi di Admin > Midtrans, matikan mode sandbox, tombol 'Tes koneksi' lolos.",
+"! Pasang ulang URL notifikasi di dashboard Midtrans PRODUKSI dan kirim tes notifikasi.",
+"Lakukan SATU pembayaran nominal terkecil dengan uang asli di akun internal, pastikan lunas otomatis, lalu refund/catat.",
+"Pastikan tidak ada invoice sandbox tersisa yang tampil sebagai tagihan nyata bagi pelanggan.",
+"Pastikan email pembayaran, struk, dan laporan pendapatan memakai nama perusahaan dan data pajak yang benar.",
+"Bersihkan data tes (workspace, invoice, slot promo yang terpakai) sebelum peluncuran.",
+]],
+]},
+
+{id:"support",t:"17. Bantuan (Tiket), Profil & Notifikasi",g:[
+["Bantuan / Tiket (/bantuan)",[
+"Buat tiket: subjek, isi, kategori, lampiran (tipe & ukuran dibatasi) → tersimpan; muncul di daftar.",
+"Balas tiket (dengan lampiran), tutup tiket bekerja; unduh lampiran hanya oleh pemilik tiket.",
+"Balasan admin → notifikasi dalam aplikasi + email 'tiket dibalas' terkirim; tautan di email benar.",
+"Penilaian tiket (tautan bintang di email) mencatat nilai; tautan dipakai ulang ditangani.",
+"Pengguna tidak bisa membuka tiket milik pengguna lain (coba ubah angka di URL).",
+"~ Di HP: percakapan tiket dan unggah lampiran bekerja.",
+]],
+["Profil (/profil)",[
+"Ubah nama, nomor HP, foto/avatar; tersimpan dan muncul di header.",
+"Ganti sandi: sandi lama salah ditolak; sandi baru valid tersimpan; bisa login dengan sandi baru.",
+"Daftar perangkat yang dikenali: hapus/lupakan perangkat bekerja.",
+"Kelola 2FA dan tautkan Google dari profil bekerja.",
+"Preferensi notifikasi (email/WA/push) bisa diubah dan dihormati.",
+"! Hapus akun: butuh konfirmasi; ada masa tenggang; bisa dibatalkan selama masa tenggang; data dihapus sesuai kebijakan setelahnya.",
+"Persetujuan legal (Syarat/Privasi): muncul saat ada versi baru dan tersimpan.",
+]],
+["Notifikasi (/notifikasi)",[
+"Daftar notifikasi, tandai dibaca, 'Baca semua', klik membuka halaman terkait.",
+"Jenis notifikasi (pesan baru, ditugaskan, mention, tugas jatuh tempo, tagihan lunas, sesi putus) benar-benar muncul.",
+"Push notification browser: izinkan, terima, berhenti; berfungsi saat tab ditutup (PWA).",
+]],
+]},
+
+{id:"admin",t:"18. PANEL ADMIN (Super Admin) — /admin",g:[
+["Akses & keamanan admin",[
+"! Akun biasa membuka /admin → ditolak (403/redirect), tidak melihat apa pun.",
+"! Admin harus lolos 2FA bila diwajibkan.",
+"Setiap aksi penting admin tercatat di Catatan Audit (siapa, apa, kapan).",
+"Menu admin lengkap sesuai grup: Dasbor, Pelanggan, Keuangan, Monitor CRM, WhatsApp & Integrasi, Dukungan, Kepatuhan, Sistem.",
+"Pintasan 'Ke Dashboard User' dan 'Dokumentasi' bekerja.",
+"@ ~ Di HP: sidebar admin membuka dari tombol menu dan menutup saat memilih menu; tabel lebar bisa digeser.",
+]],
+["Dasbor",[
+"@ Ringkasan (/admin): angka pelanggan, pendapatan, sesi, pesan benar dan masuk akal.",
+"@ Perlu Tindakan: daftar hal mendesak (tagihan macet, sesi putus, tiket, dll.) benar dan tautan menuju halaman yang tepat.",
+]],
+["Pelanggan",[
+"@ Workspace: daftar, cari, filter; buka detail.",
+"@ Detail workspace: info, anggota, pemakaian, tagihan, sesi tampil.",
+"@ Ubah paket workspace, perpanjang masa aktif, tangguhkan/aktifkan (suspend) — efeknya langsung terlihat di sisi user.",
+"@ Toggle modul Sales dan fitur khusus; override batas (limit) — nilai baru berlaku.",
+"@ Beri/cabut status Mitra (partner) bekerja.",
+"@ Mode dukungan (support mode) masuk ke workspace pelanggan dan bisa keluar; tercatat di audit.",
+"@ Terbitkan invoice VIP Onboarding (Rp500.000) untuk workspace.",
+"@ Pengguna: daftar, cari, detail; reset sandi, blokir/buka blokir, reset 2FA bekerja.",
+"@ Status pendaftaran (buka/tutup pendaftaran) → halaman daftar publik ikut berubah.",
+"@ Daftar Tunggu: lihat dan hapus entri.",
+]],
+["Keuangan",[
+"@ Laporan Pendapatan: angka & grafik benar; ekspor CSV sesuai layar.",
+"@ Tagihan Langganan: filter status; sinkron Midtrans; tandai lunas manual; ubah status — efek ke langganan benar dan tercatat audit.",
+"@ Paket & Harga: ubah harga → tampil di halaman publik/checkout baru (tidak mengubah invoice lama).",
+"@ Kalkulator Custom: buat tautan custom, riwayat tautan, regenerasi, batalkan; pengaturan rate-card (ubah/reset) dan siklus tagihan.",
+"@ Monitor Add-On: daftar & ekspor.",
+"@ Midtrans: simpan kunci, tombol Tes koneksi, mode sandbox/produksi jelas; kunci disamarkan.",
+"@ Log Pembayaran: notifikasi gateway tercatat lengkap, bisa dicari.",
+]],
+["Monitor CRM",[
+"@ Adopsi Modul, Analitik Produk, Sumber Akuisisi: halaman terbuka, angka masuk akal.",
+"@ Kampanye: lihat semua kampanye pelanggan; tombol Hentikan bekerja.",
+"@ Otomasi: lihat & Matikan otomasi bermasalah.",
+"@ Kasir Pelanggan: monitor penggunaan kasir tanpa membocorkan kunci rahasia.",
+]],
+["WhatsApp & Integrasi",[
+"@ Nomor & Sesi: daftar, detail sesi, tombol Putus bekerja.",
+"@ Lalu Lintas Pesan: volume & status pesan seluruh platform.",
+"@ API, OTP & Webhook: ringkasan; tombol matikan webhook bermasalah.",
+"@ Opt-out & Pengecualian: tambah/hapus nomor khusus; bebaskan akun/email dari tagihan; atur pengirim notifikasi platform; tombol tes email & tes pengirim.",
+]],
+["Dukungan & Komunikasi",[
+"@ Tiket: daftar, buka, balas (dengan lampiran), ubah status, unduh lampiran.",
+"@ Pengumuman: buat → tampil ke pengguna sesuai target; bisa dihapus/dinonaktifkan.",
+"@ Status & Insiden: buat insiden, tambah kabar, selesai → halaman /status publik ikut berubah.",
+]],
+["Kepatuhan",[
+"@ Permintaan Data (PDP): batalkan penghapusan akun, tunda purge workspace bekerja.",
+"@ Persetujuan Legal: daftar versi & siapa yang menyetujui benar.",
+"@ Catatan Audit: filter & cari; tidak bisa diubah; mencakup aksi-aksi di atas.",
+]],
+["Sistem",[
+"@ Kesehatan: status database, antrean, penyimpanan, mail, engine WhatsApp tampil benar; setelan mail & tes kirim email bekerja.",
+"@ Antrean & Job: lihat job gagal; ulang satu, ulang semua, hapus; tidak error.",
+"@ Email & Notifikasi serta Log Notifikasi: katalog notifikasi, status terkirim/gagal benar.",
+"@ Konfigurasi Platform: tampil benar, tidak menampilkan rahasia mentah.",
+"@ Daftar Admin: tambah admin baru dan hapus admin; tidak bisa menghapus diri sendiri / admin terakhir.",
+]],
+]},
+
+{id:"sec",t:"19. Keamanan, Hak Akses & Data (uji nakal)",g:[
+["Uji akses antar pengguna",[
+"! Login sebagai user A, ubah angka ID di URL (mis. /messages/1, /bantuan/5, /billing/invoices/9, /inbox/12, /kontak/3, /deals/4) → ditolak/404, tidak menampilkan data user/workspace lain.",
+"! Member (bukan owner/admin) tidak bisa: hapus workspace, transfer owner, ubah paket, kelola API key, undang anggota (sesuai peran).",
+"Pakai 2 browser: logout di satu, tab lama tidak bisa menjalankan aksi (sesi kedaluwarsa ditangani rapi).",
+"Sesi kedaluwarsa saat mengisi form → pesan 'sesi habis, masuk lagi' (bukan error 419 mentah).",
+"Tautan bertanda tangan (struk, unduhan, verifikasi email) diubah sedikit → ditolak.",
+]],
+["Uji input berbahaya",[
+"Ketik <scr"+"ipt>alert(1)</scr"+"ipt> di semua kolom teks (nama, catatan, pesan, nama workspace, label) → tampil sebagai teks, tidak dieksekusi.",
+"Ketik tanda kutip ' \" dan karakter SQL ('; --) → tidak error 500.",
+"Emoji, huruf non-Latin, teks sangat panjang, spasi di awal/akhir → ditangani rapi.",
+"Unggah file palsu (mis. .php diganti .jpg), file kosong, file melebihi batas → ditolak dengan pesan jelas.",
+"Header keamanan ada (cek di DevTools → Network).",
+]],
+["Ketahanan & batas",[
+"Klik tombol aksi dua kali cepat (kirim, bayar, simpan) → tidak terjadi duplikasi.",
+"Tombol Back/Forward/Refresh di tengah alur (bayar, impor) → tidak merusak data.",
+"Batas laju (rate limit) login, daftar, reset sandi, kirim pesan, API → memberi pesan jelas.",
+"Putus internet saat kirim → muncul status gagal + bisa coba lagi, tidak hilang diam-diam.",
+"Muat halaman dengan data banyak (ribuan kontak/pesan) → tetap responsif (< ±3 detik wajar).",
+]],
+]},
+
+{id:"email",t:"20. Email & Notifikasi Keluar",g:[
+["Cek kotak masuk tiap email",[
+"Email verifikasi, reset sandi, undangan anggota, tagihan terbit, pembayaran diterima, masa berlaku habis, tiket dibalas, kabar tim.",
+"Pengirim, subjek, logo, dan tombol benar; tidak masuk Spam; tautan membuka halaman yang benar.",
+"~ Email tampil rapi di Gmail HP (tidak meluber); mode gelap tetap terbaca.",
+"Bahasa email mengikuti bahasa pengguna.",
+"Tidak ada variabel mentah seperti {{nama}} atau teks 'undefined'.",
+"Notifikasi lewat WhatsApp dari platform (jika diaktifkan) terkirim dan isinya benar.",
+"Tautan 'berhenti terima email' di email bekerja.",
+]],
+]},
+
+{id:"final",t:"21. Cek akhir sebelum rilis",g:[
+["Gerbang akhir",[
+"! Semua butir P1 sudah lulus atau bug-nya terdata dan disepakati.",
+"! Alur utama ujung-ke-ujung berhasil: Daftar → verifikasi email → buat workspace → tautkan nomor → terima chat → balas → buat deal → buat tagihan → pelanggan bayar → lunas otomatis → laporan.",
+"! Alur bisnis Pesanvo sendiri berhasil: pilih paket → bayar Midtrans → paket aktif → email pembayaran → admin melihat di Pendapatan.",
+"Tidak ada error di Console browser (F12) pada halaman utama yang dites.",
+"Tidak ada error 500 / halaman putih pada seluruh halaman yang dites.",
+"Mobile: seluruh alur utama sudah dicoba di HP asli.",
+"Dua bahasa dan dua tema sudah dicek pada halaman-halaman utama.",
+"Lingkungan produksi: kunci pembayaran mode LIVE, email pengirim benar, domain & HTTPS valid, backup berjalan.",
+]],
+]},
+
+];
+
+/* ===== MESIN CHECKLIST ===== */
+const KEY="pesanvo_qa_v1";
+let state={}; try{state=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){state={}}
+state.c=state.c||{}; state.b=state.b||{}; state.n=state.n||{}; state.meta=state.meta||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const items=[]; // {id,sec,grp,txt,p1,m,a}
+const app=$("#app"), toc=$("#toc");
+DATA.forEach((s,si)=>{
+  let n=0;
+  const det=document.createElement("details"); det.className="sec"; det.id=s.id; if(si<2)det.open=false;
+  let html="";
+  s.g.forEach((g,gi)=>{
+    html+=`<div class="grp"><h3>${esc(g[0])}</h3>`;
+    g[1].forEach((raw,ii)=>{
+      let t=raw,p1=false,m=false,a=false;
+      while(/^[!~@]/.test(t)){ if(t[0]==="!")p1=true; if(t[0]==="~")m=true; if(t[0]==="@")a=true; t=t.slice(1); }
+      t=t.trim();
+      const id=`${s.id}.${gi}.${ii}`; n++;
+      items.push({id,sec:s.id,txt:t,p1,m,a,grp:g[0],stitle:s.t});
+      const tags=(p1?'<span class="tag p1">P1</span>':"")+(m?'<span class="tag m">HP</span>':"")+(a?'<span class="tag a">Admin</span>':"");
+      html+=`<div class="it" data-id="${id}" data-p1="${p1?1:0}" data-m="${m?1:0}">
+        <input type="checkbox" id="c-${id}" aria-label="Selesai">
+        <div class="tx"><label for="c-${id}">${esc(t)}${tags}</label>
+          <textarea class="note" placeholder="Catatan: apa yang terjadi, langkah, layar/perangkat…"></textarea></div>
+        <div class="acts"><button class="b" title="Tandai ada bug">Bug</button><button class="nt" title="Tulis catatan">Catatan</button></div></div>`;
+    });
+    html+=`</div>`;
+  });
+  det.innerHTML=`<summary><span>${esc(s.t)}</span><span class="cnt" data-cnt="${s.id}"></span></summary><div class="body">${html}</div>`;
+  app.appendChild(det);
+  const a=document.createElement("a"); a.href="#"+s.id; a.dataset.t=s.id; a.innerHTML=`${esc(s.t.split(".")[0])}. ${esc(s.t.replace(/^\w+\.\s*/,"").split(/[(—]/)[0].trim())} <small data-tc="${s.id}"></small>`;
+  a.onclick=e=>{e.preventDefault();det.open=true;det.scrollIntoView({behavior:"smooth",block:"start"})};
+  toc.appendChild(a);
+});
+
+function refreshItem(el){
+  const id=el.dataset.id;
+  el.classList.toggle("ck",!!state.c[id]);
+  el.classList.toggle("bug",!!state.b[id]);
+  $("input",el).checked=!!state.c[id];
+  const ta=$(".note",el); if(state.n[id]&&ta.value!==state.n[id])ta.value=state.n[id];
+  if(state.n[id])el.classList.add("shownote");
+}
+function stats(){
+  const total=items.length; let done=0,bug=0,p1=0;
+  items.forEach(i=>{ if(state.c[i.id])done++; else if(i.p1)p1++; if(state.b[i.id])bug++; });
+  $("#sDone").textContent=done; $("#sTotal").textContent=total; $("#sBug").textContent=bug; $("#sP1").textContent=p1;
+  const pct=total?Math.round(done/total*100):0; $("#sPct").textContent=pct+"%"; $("#barfill").style.width=pct+"%";
+  DATA.forEach(s=>{
+    const arr=items.filter(i=>i.sec===s.id), d=arr.filter(i=>state.c[i.id]).length;
+    const c=$(`[data-cnt="${s.id}"]`); c.textContent=`${d}/${arr.length}`; c.classList.toggle("ok",d===arr.length);
+    const tc=$(`[data-tc="${s.id}"]`); tc.textContent=`${d}/${arr.length}`; $(`[data-t="${s.id}"]`).classList.toggle("done",d===arr.length);
+  });
+}
+$$(".it").forEach(refreshItem); stats();
+
+app.addEventListener("change",e=>{
+  if(e.target.type!=="checkbox")return;
+  const el=e.target.closest(".it"); state.c[el.dataset.id]=e.target.checked; if(!e.target.checked)delete state.c[el.dataset.id];
+  save(); refreshItem(el); stats(); applyFilter();
+});
+app.addEventListener("click",e=>{
+  const el=e.target.closest(".it"); if(!el)return; const id=el.dataset.id;
+  if(e.target.closest(".b")){ state.b[id]?delete state.b[id]:state.b[id]=1; if(state.b[id])el.classList.add("shownote"); save(); refreshItem(el); stats(); applyFilter(); }
+  if(e.target.closest(".nt")){ el.classList.toggle("shownote"); if(el.classList.contains("shownote"))$(".note",el).focus(); }
+});
+app.addEventListener("input",e=>{
+  if(!e.target.classList.contains("note"))return;
+  const id=e.target.closest(".it").dataset.id; const v=e.target.value.trim();
+  if(v)state.n[id]=e.target.value; else delete state.n[id]; save();
+});
+$$("[data-meta]").forEach(i=>{ i.value=state.meta[i.dataset.meta]||""; i.oninput=()=>{state.meta[i.dataset.meta]=i.value;save()}; });
+if(!state.meta.date){const d=new Date().toISOString().slice(0,10);$('[data-meta="date"]').value=d;state.meta.date=d;}
+
+function applyFilter(){
+  const f=$("#filter").value, q=$("#q").value.trim().toLowerCase();
+  $$(".it").forEach(el=>{
+    const id=el.dataset.id, it=items.find(x=>x.id===id); let show=true;
+    if(f==="todo")show=!state.c[id]; if(f==="done")show=!!state.c[id]; if(f==="bug")show=!!state.b[id];
+    if(f==="p1")show=it.p1; if(f==="mobile")show=it.m;
+    if(show&&q)show=(it.txt+" "+it.grp+" "+it.stitle).toLowerCase().includes(q);
+    el.classList.toggle("hide",!show);
+  });
+  $$(".grp").forEach(g=>g.classList.toggle("hide",!$$(".it:not(.hide)",g).length));
+  $$("details.sec").forEach(d=>{
+    const vis=$$(".it:not(.hide)",d).length; d.classList.toggle("hide",!vis);
+    if((q||f!=="all")&&vis)d.open=true;
+  });
+}
+$("#filter").onchange=applyFilter; $("#q").oninput=applyFilter;
+$("#btnOpen").onclick=()=>$$("details.sec").forEach(d=>d.open=true);
+$("#btnClose").onclick=()=>$$("details.sec").forEach(d=>d.open=false);
+const P=$("#panel"),pT=$("#pText");
+function openPanel(title,help,text,{copy=1,load=0,ok=0}={}){$("#pTitle").textContent=title;$("#pHelp").textContent=help;pT.value=text;$("#pCopy").style.display=copy?"":"none";$("#pLoad").style.display=load?"":"none";$("#pOk").style.display=ok?"":"none";pT.style.display=ok?"none":"";P.classList.remove("hide");if(!ok){pT.focus();pT.select()}}
+$("#pClose").onclick=()=>P.classList.add("hide");
+$("#pCopy").onclick=()=>{pT.select();try{document.execCommand("copy");$("#pHelp").textContent="Tersalin. Jika tidak, blok teks lalu salin manual (Ctrl+C)."}catch(e){$("#pHelp").textContent="Blok teks lalu salin manual (Ctrl+C)."}};
+$("#btnSave").onclick=()=>openPanel("Simpan / muat progres","Salin teks ini dan simpan. Untuk melanjutkan: tempel teks di sini lalu klik 'Muat dari teks ini'.",JSON.stringify({c:state.c,b:state.b,n:state.n,meta:state.meta}),{load:1});
+$("#pLoad").onclick=()=>{try{const o=JSON.parse(pT.value);state={c:o.c||{},b:o.b||{},n:o.n||{},meta:o.meta||{}};save();$$(".it").forEach(e=>{e.classList.remove("shownote");const ta=$(".note",e);ta.value=state.n[e.dataset.id]||"";refreshItem(e)});$$("[data-meta]").forEach(x=>x.value=state.meta[x.dataset.meta]||"");stats();applyFilter();$("#pHelp").textContent="Progres berhasil dimuat."}catch(e){$("#pHelp").textContent="Teks tidak valid, pastikan menempel seluruh teks progres."}};
+$("#btnReset").onclick=()=>openPanel("Reset semua?","Menghapus SEMUA centang, bug, dan catatan. Tidak bisa dibatalkan.","",{copy:0,ok:1});
+$("#pOk").onclick=()=>{const m=state.meta;state={c:{},b:{},n:{},meta:m};save();$$(".note").forEach(t=>t.value="");$$(".it").forEach(e=>{e.classList.remove("shownote");refreshItem(e)});stats();applyFilter();P.classList.add("hide")};
+$("#btnReport").onclick=()=>{
+  const m=state.meta; const bugs=items.filter(i=>state.b[i.id]);
+  const L=["LAPORAN BUG QA PESANVO","Penguji: "+(m.tester||"-")+" | Tanggal: "+(m.date||"-"),"Perangkat: "+(m.device||"-")+" | Versi: "+(m.build||"-"),"Progres: "+$("#sDone").textContent+"/"+$("#sTotal").textContent+" ("+$("#sPct").textContent+") | Bug: "+bugs.length,""];
+  if(!bugs.length)L.push("(Belum ada bug yang ditandai)");
+  bugs.forEach((b,i)=>{L.push((i+1)+". ["+b.stitle+"] "+b.grp);L.push("   Butir: "+b.txt+(b.p1?"  (P1)":""));L.push("   Catatan: "+(state.n[b.id]||"-").split(String.fromCharCode(10)).join(String.fromCharCode(10)+"            "));L.push("")});
+  openPanel("Laporan bug","Klik Salin lalu tempel ke WhatsApp/Notion/dll.",L.join(String.fromCharCode(10)));
+};
+</script>
+</body>
+</html>
